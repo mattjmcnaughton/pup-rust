@@ -1,0 +1,33 @@
+---
+- name: check if rustup is installed
+  command: which rustup
+  register: rustup_is_installed
+  failed_when: rustup_is_installed.rc > 1
+  changed_when: no
+
+
+- block:
+  - name: install deps on relevant platform
+    include_tasks: install_deps-{{ ansible_os_family }}.yml
+
+  - name: install rustup script
+    get_url:
+      url: https://sh.rustup.rs
+      dest: /tmp/rustup-init.sh
+      mode: u+rwx
+
+  - name: run rustup script
+    command: /tmp/rustup-init.sh -y --no-modify-path
+  always:
+    - name: remove rustup script
+      file:
+        path: /tmp/rustup-init.sh
+        state: absent
+  when: rustup_is_installed.rc > 0
+
+- name: ensure ~/.cargo/bin is in PATH
+  lineinfile:
+    path: "{{ dotfile }}"
+    state: present
+    line: "[[ \":$PATH:\" != *\":$HOME/.cargo/bin:\"* ]] && PATH=\"$HOME/.cargo/bin:$PATH\" || true"
+
