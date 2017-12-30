@@ -1,2 +1,2 @@
 ---
-dotfile: "{{ pup_rust_vars_dotfile }}"
+dotfile: "{{ pup_rust_main_dotfile }}"
