@@ -6,12 +6,6 @@
   changed_when: no
 
 - block:
-  - name: install deps on relevant platform
-    include_tasks:
-      file: install_deps-{{ ansible_os_family }}.yml
-      apply:
-        become: yes
-
   - name: install rustup script
     get_url:
       url: https://sh.rustup.rs
